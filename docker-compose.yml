@@ -1,13 +1,17 @@
+version: '3.8'
+
 services:
   sub1:
     build: ./sub1
     ports: ["8081:8080"]
-    restart: unless-stopped
+    networks:
+      - power-grid
 
   sub2:
     build: ./sub2
     ports: ["8083:8080"]
-    restart: unless-stopped
+    networks:
+      - power-grid
 
   powerline:
     build: ./powerline
@@ -15,4 +19,9 @@ services:
     depends_on:
       - sub1
       - sub2
-    restart: unless-stopped
+    networks:
+      - power-grid
+
+networks:
+  power-grid:
+    driver: bridge

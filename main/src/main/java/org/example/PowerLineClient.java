@@ -1,32 +1,23 @@
 package org.example;
 
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
 public class PowerLineClient {
     public static void main(String[] args) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // 1. Получаем напряжение
-        String voltageUrl = "http://localhost:8081/voltage";
-        String voltageStr = restTemplate.getForObject(voltageUrl, String.class);
-        double voltage = Double.parseDouble(voltageStr);
+        // 1. Получаем напряжение (используем полный путь /api/voltage)
+        String voltageUrl = "http://localhost:8081/api/voltage";
+        String voltage = restTemplate.getForObject(voltageUrl, String.class);
         System.out.println("Получено напряжение: " + voltage + " кВ");
 
-        // 2. Настраиваем заголовки для POST-запроса
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // 3. Отправляем через линию передачи
-        String powerlineUrl = "http://localhost:8082/line/transfer";
+        // 2. Передаем через линию
+        String powerlineUrl = "http://localhost:8082/api/transfer";
         String response = restTemplate.postForObject(
                 powerlineUrl,
-                new HttpEntity<>(String.valueOf(voltage), headers),
+                voltage,
                 String.class
         );
-
-        System.out.println("Ответ от линии передачи: " + response);
+        System.out.println("Результат передачи: " + response);
     }
 }

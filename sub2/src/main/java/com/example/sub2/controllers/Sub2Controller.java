@@ -1,13 +1,16 @@
 package com.example.sub2.controllers;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class Sub2Controller {
-    @PostMapping("/receive")
-    public String receive(@RequestBody double power) {
-        return String.format("Подстанция 2: принято %.1f кВт", power);
+
+    @PostMapping(value = "/receive",
+            consumes = MediaType.TEXT_PLAIN_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    public String receive(@RequestBody String power) {
+        return "Принято " + power + " кВт";
     }
 }

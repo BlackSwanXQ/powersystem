@@ -1,25 +1,42 @@
 package com.example.powerline.controllers;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-// PowerLineController.java
 @RestController
+@RequestMapping("/api")
 public class PowerLineController {
-    private final RestTemplate restTemplate = new RestTemplate();
 
-    @PostMapping("/transfer")
-    public String transfer(@RequestBody double power) {
-        double powerAfterLoss = power * 0.9; // Потери 10%
+    private final RestTemplate restTemplate;
 
-        String response = restTemplate.postForObject(
-                "http://substation2:8080/receive",
-                powerAfterLoss,
-                String.class
-        );
-
-        return String.format("Линия: передано %.1f кВт. %s", powerAfterLoss, response);
+    public PowerLineController() {
+        this.restTemplate = new RestTemplate();
     }
-}  
+
+    @PostMapping(value = "/transfer",
+            consumes = MediaType.TEXT_PLAIN_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> transfer(@RequestBody String power) {
+        try {
+            double powerValue = Double.parseDouble(power);
+            double powerAfterLoss = powerValue * 0.9;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.TEXT_PLAIN);
+
+            String response = restTemplate.exchange(
+                    "http://sub2:8080/api/receive",
+                    HttpMethod.POST,
+                    new HttpEntity<>(String.valueOf(powerAfterLoss), headers),
+                    String.class
+            ).getBody();
+
+            return ResponseEntity.ok("Передано: " + powerAfterLoss + " кВт. " + response);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка: " + e.getMessage());
+        }
+    }
+}
