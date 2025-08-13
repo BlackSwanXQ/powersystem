@@ -6,6 +6,7 @@
 //    public static void main(String[] args) {
 //        RestTemplate restTemplate = new RestTemplate();
 //
+
 //        // 1. Получаем напряжение (используем полный путь /api/voltage)
 //        String voltageUrl = "http://localhost:8081/api/voltage";
 //        String voltage = restTemplate.getForObject(voltageUrl, String.class);
