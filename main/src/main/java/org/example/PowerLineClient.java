@@ -1,24 +1,42 @@
-//package org.example;
+//package org.example;  // Исправлен package (не может содержать "main.java")
 //
-//import org.springframework.web.client.RestTemplate;
+//import org.springframework.mail.SimpleMailMessage;
+//import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.JavaMailSenderImpl;
+//
+//import java.util.Properties;
 //
 //public class PowerLineClient {
 //    public static void main(String[] args) {
-//        RestTemplate restTemplate = new RestTemplate();
+//        // 1. Создаем и настраиваем отправителя
+//        JavaMailSender mailSender = getJavaMailSender();
 //
-
-//        // 1. Получаем напряжение (используем полный путь /api/voltage)
-//        String voltageUrl = "http://localhost:8081/api/voltage";
-//        String voltage = restTemplate.getForObject(voltageUrl, String.class);
-//        System.out.println("Получено напряжение: " + voltage + " кВ");
+//        // 2. Создаем сообщение
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo("theblack2swan@gmail.com");
+//        message.setSubject("Test Email");
+//        message.setText("This is a test email sent from Java application");
 //
-//        // 2. Передаем через линию
-//        String powerlineUrl = "http://localhost:8082/api/transfer";
-//        String response = restTemplate.postForObject(
-//                powerlineUrl,
-//                voltage,
-//                String.class
-//        );
-//        System.out.println("Результат передачи: " + response);
+//        // 3. Отправляем сообщение
+//        mailSender.send(message);
+//        System.out.println("Email sent successfully!");
+//    }
+//
+//    private static JavaMailSender getJavaMailSender() {
+//        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+//
+//        // Настройки SMTP сервера (пример для Gmail)
+//        mailSender.setHost("smtp.gmail.com");
+//        mailSender.setPort(587);
+//        mailSender.setUsername("your-email@gmail.com");  // Замените на ваш email
+//        mailSender.setPassword("your-password-or-app-password");  // Замените на пароль
+//
+//        Properties props = mailSender.getJavaMailProperties();
+//        props.put("mail.transport.protocol", "smtp");
+//        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+//        props.put("mail.debug", "true");  // Для логгирования
+//
+//        return mailSender;
 //    }
 //}

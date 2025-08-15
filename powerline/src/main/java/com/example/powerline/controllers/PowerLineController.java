@@ -1,42 +1,30 @@
 package com.example.powerline.controllers;
 
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api")
 public class PowerLineController {
+    private Integer currentPower;
+    private final Object lock = new Object();
 
-    private final RestTemplate restTemplate;
-
-    public PowerLineController() {
-        this.restTemplate = new RestTemplate();
+    @PostMapping("/transfer")
+    public ResponseEntity<String> savePower(@RequestBody Integer power) {
+        synchronized (lock) {
+            this.currentPower = power;
+        }
+        return ResponseEntity.ok("Мощность " + power + " сохранена");
     }
 
-    @PostMapping(value = "/transfer",
-            consumes = MediaType.TEXT_PLAIN_VALUE,
-            produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> transfer(@RequestBody String power) {
-        try {
-            double powerValue = Double.parseDouble(power);
-            double powerAfterLoss = powerValue * 0.9;
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.TEXT_PLAIN);
-
-            String response = restTemplate.exchange(
-                    "http://sub2:8080/api/receive",
-                    HttpMethod.POST,
-                    new HttpEntity<>(String.valueOf(powerAfterLoss), headers),
-                    String.class
-            ).getBody();
-
-            return ResponseEntity.ok("Передано: " + powerAfterLoss + " кВт. " + response);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Ошибка: " + e.getMessage());
+    @GetMapping("/current-power")
+    public ResponseEntity<Integer> getPower() {
+        synchronized (lock) {
+            if (currentPower == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            return ResponseEntity.ok(currentPower);
         }
     }
 }

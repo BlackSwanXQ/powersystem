@@ -8,23 +8,37 @@
     <artifactId>main</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!-- Указываем родительский Spring Boot для управления версиями -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version> <!-- Актуальная версия Spring Boot -->
+    </parent>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Можно переопределить версии библиотек здесь -->
     </properties>
+
     <dependencies>
+        <!-- Spring Boot Starter Mail (включает JavaMailSender) -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>6.2.9</version>
-            <scope>compile</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+
+        <!-- Spring Web (для RestController, если нужно) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Jackson (уже включён в spring-boot-starter-web, но можно указать явно) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
         </dependency>
     </dependencies>
-
 </project>
