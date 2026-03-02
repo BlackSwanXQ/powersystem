@@ -1,0 +1,21 @@
+name: Test Runner
+on: [push]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show system info
+        run: |
+          echo "Runner name: $(hostname)"
+          echo "OS: $(uname -a)"
+          echo "Docker version: $(docker --version)"
+          echo "Disk space:"
+          df -h
+
+      - name: Build a test image
+        run: |
+          docker build -t test-image:latest .
